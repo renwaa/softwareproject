@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 const realTimeChatSchema = new mongoose.Schema(
   {
     _id: {
@@ -15,18 +16,18 @@ const realTimeChatSchema = new mongoose.Schema(
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref : 'userModel',
+      ref : "userModel",
       required: true,
     },
     agentId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref : 'userModel',
+      ref : "agentModel",
       required: true,
     },
     messages: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'messageModel',
+        ref: "messageModel",
       }
     ]
   },
