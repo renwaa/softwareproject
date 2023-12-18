@@ -4,8 +4,8 @@ const userSchema = new mongoose.Schema(
   {
     _id: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
-    },
+      required: false,
+     },
     firstName: {
       type: String,
       required: true,
@@ -14,19 +14,20 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    password: {
-      type: String,
-      required: true,
-      minlength:5
-    },
     ticketId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'ticketModel',
+      required: false,
     },
     email: {
       type: String,
       required: true,
       unique:true
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength:5
     },
     username: {
       type: String,
@@ -39,12 +40,28 @@ const userSchema = new mongoose.Schema(
     },
     rating: {
       type: Number,
+      default: 0
     },
+    status: {
+      type: Number,
+      default: 0, //0 is available and 1 is not
+      required:false,
+    },
+    mfaEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    mfaSecret: {
+      type: String,
+      required: false,
+    },
+   
   },
   // schemaOptions
   {
     strict: true,
     timestamps: true,
+    collection: 'user',
   }
 );
 

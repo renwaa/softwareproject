@@ -2,12 +2,13 @@ const express = require("express");
 const cookieParser=require('cookie-parser')
 const app = express();
 const mongoose = require("mongoose");
-const productRouter = require("./Routes/products");
-const userRouter = require("./Routes/users");
-const authRouter = require("./Routes/auth");
+const userRouter = require("../backend/Routes/userRouter");
+const authRouter = require("../backend/Routes/authRouter");
+const chatRouter = require("../backend/Routes/chatRouter");
+const mfaRouter = require("../backend/Routes/mfaRouter");
 require('dotenv').config();
 
-const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
+const authenticationMiddleware = require("./middleware/authenticationMiddleware");
 const cors = require("cors");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -16,7 +17,7 @@ app.use(cookieParser())
 
 app.use(
   cors({
-    origin: process.env.ORIGIN,
+    origin:"*",
     methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true,
   })
@@ -34,9 +35,11 @@ app.use(
 // });
 
 app.use("/api/v1", authRouter);
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/chat", chatRouter);
+app.use("/api/v1/mfa", mfaRouter);
+
 app.use(authenticationMiddleware);
-
-
 const db_name = process.env.DB_NAME;
 // * Cloud Connection
 // const db_url = `mongodb+srv://TestUser:TestPassword@cluster0.lfqod.mongodb.net/${db_name}?retryWrites=true&w=majority`;
