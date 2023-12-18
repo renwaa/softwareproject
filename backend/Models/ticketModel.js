@@ -14,17 +14,34 @@ const ticketSchema = new mongoose.Schema(
     type: {
       type: String,
       enum : ['Software' , 'Hardware' , 'Networks'],
-      required: true,
+      required: false,
+    },
+    agent: {
+      type: String,
+      enum: ['agent1' , 'agent2' , 'agent3'],
+      required: false, 
+      ref:'agentModel',
+    },
+    createdAt: {
+      type: Date,
+      required: false,
     },
     endedAt: {
       type: Date,
     },
-    resolutionTime: {
+    modifiedAt: {
       type: Date,
+    },
+    timeofRes: {
+      type: Date,
+    },
+    solution: {
+      type: String,
+      required: false,
     },
     status: {
       type: String,
-      required: true,
+      required: false,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -51,7 +68,11 @@ const ticketSchema = new mongoose.Schema(
     },
     name: {
       type : String,
-    }
+    },
+    rating:{
+      type: Number,
+      ref: 'agentModel',
+    },
   },
   // schemaOptions
   {

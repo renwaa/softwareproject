@@ -2,24 +2,35 @@ const mongoose = require('mongoose');
 
 const analyticsSchema = new mongoose.Schema(
   {
-    _id: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-    },
+    // Reference to the report or ticket (you can adjust based on your needs)
     reportId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref:'reportModel',
-      required: true,
+      ref: 'reportModel',
     },
     chartType: {
       type: String,
-      required: true,
     },
+    // Example fields for analytics data
+    ticketStatusAnalytics: {
+      open: Number,
+      pending: Number,
+      closed: Number,
+    },
+    ticketPriorityAnalytics: {
+      high: Number,
+      medium: Number,
+      low: Number,
+    },
+    ticketTypeAnalytics: {
+      software: Number,
+      hardware: Number,
+      networks: Number,
+    },
+    // Include other analytics fields based on your requirements
   },
-  // schemaOptions
   {
-    strict: true,
-    timestamps: true,
+    strict: false,
+    timestamps: false,
   }
 );
 

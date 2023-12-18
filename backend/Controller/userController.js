@@ -3,6 +3,8 @@ const ticketModel = require("../Models/ticketModel");
 const userModel = require("../Models/userModel");
 const { getCurrentUser } = require("./authController");
 const { createChat } = require("./realTimeChatController")
+const sessionModel = require("../Models/sessionModel");
+const agentModel = require("../Models/agentModel");
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const secretKey = process.env.SECRET_KEY;
@@ -120,9 +122,44 @@ findAvailableAgent: async function() {
 },
 
 
-};
+userRate : async (req, res) => {
+    try {
+      const user = await getCurrentUser(req, res);
+      const userId = user._id;
+      const { ticketId } = req.params;
+      const { rating } = req.body;
+
+      console.log(ticketId)
+     
+      const ticket = await ticketModel.findById(ticketId);
+      console.log("ticket : ", ticket);
+      if (!ticket) {
+        return res.status(404).json({ error: 'Ticket not found' });
+      }
+
+      if (ticket.status !== 'close') {
+        return res.status(400).json({ error: 'Cannot rate an open ticket' });
+      }
+      console.log(ticket)
+      const agent = await agentModel.findById(ticket.agentId);
+  
+      if (!agent) {
+        return res.status(404).json({ error: 'Agent not found' });
+      }
+
+      agent.rating = rating;
+      await agent.save();
+  
+      return res.status(200).json({ message: 'Agent rated successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  },
   
 
 
-module.exports =userController;
 
+};
+
+module.exports = userController;
