@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema(
   {
-    _id: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-    },
+    // _id: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   required: true,
+    // },
     firstName: {
       type: String,
       required: true,
@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
     },
     ticketId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'ticketModel',
+      ref: "ticketModel",
     },
     email: {
       type: String,
@@ -34,12 +34,33 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum : ['user' , 'admin' , 'agent' , 'manager'],
+      enum : ['user' , 'admin' ,'manager'],
       required: true,
     },
-    rating: {
-      type: Number,
+    notify: {
+      type: Boolean,
+     
     },
+    mfaEnabled : {
+      type : Boolean,
+      
+    },
+    mfaSecret : {
+      type : String,
+
+    },
+    issueType: {
+      type: String,
+      enum: ['software', 'hardware', 'network'],
+      required: true,
+    },
+    status: {
+      type: Number,
+      required: function () {
+        return this.role === 'agent';
+      },
+    }
+
   },
   // schemaOptions
   {

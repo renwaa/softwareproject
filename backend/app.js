@@ -1,19 +1,39 @@
 const express = require("express");
-const cookieParser=require('cookie-parser')
-const app = express();
+const http = require("http");
+const socketIO = require("socket.io");
+const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
-const productRouter = require("./Routes/products");
-const userRouter = require("./Routes/users");
-const authRouter = require("./Routes/auth");
-require('dotenv').config();
-
-const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
+// const userModel = require("../backend/Models/userModel");
+// const messageModel = require("../backend/Models/messageModel");
+// const messageController = require("../backend/Controller/messageController");
+// const realTimeChatController = require("../backend/Controller/realTimeChatController");
+// const userController = require("../backend/Controller/userController")
+const authRouter = require("../backend/Routes/authRouter");
+const userRouter = require("../backend/Routes/userRouter");
+const adminRouter = require("../backend/Routes/adminRouter");
+const realTimeChatRouter = require("../backend/Routes/realTimeChatRouter");
+const agentRouter = require("../backend/Routes/agentRouter");
+const systemRouter = require("../backend/Routes/systemRouter");
+const MFARouter = require("../backend/Routes/MFARouter");
+const messageRouter = require("../backend/Routes/messageRouter");
+const authenticationMiddleware = require("../backend/Middleware/authenticationMiddleware");
+
+require("dotenv").config();
+
+const app = express();
+const server = http.createServer(app);
+const io = socketIO(server, {
+  cors: {
+    origin: "http://localhost:5173", 
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-app.use(cookieParser())
-
+app.use(cookieParser());
 app.use(
   cors({
     origin: process.env.ORIGIN,
@@ -22,42 +42,37 @@ app.use(
   })
 );
 
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "*");
-//   res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS,HEAD");
-//   res.setHeader(
-//     "Access-Control-Expose-Headers",
-//     "*"
-//   );
-
-//   next();
-// });
-
-app.use("/api/v1", authRouter);
-app.use(authenticationMiddleware);
-
-
-const db_name = process.env.DB_NAME;
-// * Cloud Connection
-// const db_url = `mongodb+srv://TestUser:TestPassword@cluster0.lfqod.mongodb.net/${db_name}?retryWrites=true&w=majority`;
-// * Local connection
-const db_url = `${process.env.DB_URL}/${db_name}`; // if it gives error try to change the localhost to 127.0.0.1
-
-// ! Mongoose Driver Connection
-
+// Mongoose connection setup
 const connectionOptions = {
   useUnifiedTopology: true,
   useNewUrlParser: true,
 };
+const db_name = process.env.DB_NAME;
+const db_url = `${process.env.DB_URL}/${db_name}`;
 
 mongoose
   .connect(db_url, connectionOptions)
-  .then(() => console.log("mongoDB connected"))
+  .then(() => console.log("MongoDB connected"))
   .catch((e) => {
     console.log(e);
   });
 
-app.use(function (req, res, next) {
-  return res.status(404).send("404");
+
+// Routes setup
+app.use("/api/v1", authRouter);
+app.use(authenticationMiddleware); // Place this middleware before routes that require authentication
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/realTimeChat", realTimeChatRouter);
+app.use("/api/v1/agent", agentRouter);
+app.use("/api/v1/system", systemRouter);
+app.use("/api/v1/MFA", MFARouter);
+app.use("/api/v1/message", messageRouter);
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
-app.listen(process.env.PORT, () => console.log("server started"));
+
+
+

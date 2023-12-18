@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const realTimeChatSchema = new mongoose.Schema(
+const messageSchema = new mongoose.Schema(
   {
     _id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -8,7 +8,7 @@ const realTimeChatSchema = new mongoose.Schema(
     },
     chatId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'realTimeChatModel',
+      ref: "realTimeChatModel",
       required: true,
     },
     content: {
@@ -19,9 +19,14 @@ const realTimeChatSchema = new mongoose.Schema(
       type : Date,
       required: true,
     },
-    createdBy: {
+    sender: {
       type: mongoose.Schema.Types.ObjectId,
-      ref : 'userModel',
+      ref : "userModel" || "agentModel",
+      required: true,
+    },
+    receiver: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref : "userModel" || "agentModel",
       required: true,
     },
   },
@@ -32,5 +37,5 @@ const realTimeChatSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('realTimeChatModel', realTimeChatSchema);
-module.exports.Schema = realTimeChatSchema;
+module.exports = mongoose.model('messageModel', messageSchema);
+module.exports.Schema = messageSchema;
