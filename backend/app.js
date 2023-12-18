@@ -2,9 +2,11 @@ const express = require("express");
 const cookieParser=require('cookie-parser')
 const app = express();
 const mongoose = require("mongoose");
-const productRouter = require("./Routes/products");
-const userRouter = require("./Routes/users");
-const authRouter = require("./Routes/auth");
+const user = require("../backend/Routes/user");
+const auth = require("../backend/Routes/auth");
+const manager = require("../backend/Routes/manager");
+const agent = require("../backend/Routes/agent");
+const system = require("../backend/Routes/system");
 require('dotenv').config();
 
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
@@ -33,8 +35,14 @@ app.use(
 //   next();
 // });
 
-app.use("/api/v1", authRouter);
+app.use("/api/v1", auth);
 app.use(authenticationMiddleware);
+app.use("/api/v1/user", user);
+app.use("/api/v1/manager", manager);
+app.use("/api/v1/agent", agent);
+app.use("/api/v1/system", system);
+// app.use("/api/v1/viewAnalytics", managerRouter);
+// app.use("/api/v1/createReports", managerRouter);
 
 
 const db_name = process.env.DB_NAME;
