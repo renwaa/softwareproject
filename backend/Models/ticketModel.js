@@ -2,28 +2,29 @@ const mongoose = require('mongoose');
 
 const ticketSchema = new mongoose.Schema(
   {
-    _id: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-    },
+    // _id: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   required: false,
+    // },
     priority: {
       type: String,
       enum: ['high', 'medium', 'low'],
-      required: true,
+      required : true,
     },
     type: {
       type: String,
       enum : ['Software' , 'Hardware' , 'Networks'],
-      required: true,
+      required: false,
     },
     agent: {
       type: String,
       enum: ['agent1' , 'agent2' , 'agent3'],
-      required: true,
+      required: false, 
+      ref:'agentModel',
     },
     createdAt: {
       type: Date,
-      required: true,
+      required: false,
     },
     endedAt: {
       type: Date,
@@ -31,37 +32,46 @@ const ticketSchema = new mongoose.Schema(
     modifiedAt: {
       type: Date,
     },
-    resolutionTime: {
+    timeofRes: {
       type: Date,
     },
     solution: {
       type: String,
-      required: true,
+      required: false,
     },
     status: {
       type: String,
-      required: true,
+      required: false,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref : 'userModel',
+      ref : "userModel",
       required: true,
     },
     subCategory: {
       type: String,
       enum : ['Desktops' ,'Laptops' ,'Printers' ,'Servers' ,'Networking equipment' , 
       'Operating system' , 'Application software' , 'Custom software' ,'Integration issues' ,
-      ' Email issues' , ' Internet connection problems' ,'Website errors'  ],
+      'Email issues' , 'Internet connection problems' ,'Website errors'  ],
       required: true,
     },
     workflow: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'workflowModel',
+      ref: "workflowModel",
     },
     agentId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref : 'userModel',
-      required: true,
+      ref : "agentModel",
+    },
+    solution : {
+      type :String , 
+    },
+    name: {
+      type : String,
+    },
+    rating:{
+      type: Number,
+      ref: 'agentModel',
     },
   },
   // schemaOptions
@@ -71,12 +81,12 @@ const ticketSchema = new mongoose.Schema(
   }
 );
 
-ticketSchema.virtual('resolutionTime').get(function () {
-  if (this.endedAt) {
-    return this.endedAt - this.createdAt;
-  }
-  return null;
-});
+// ticketSchema.virtual('timeOfR').get(function () {
+//   if (this.endedAt) {
+//     return this.endedAt - this.createdAt;
+//   }
+//   return null;
+// });
 
 module.exports = mongoose.model('ticketModel', ticketSchema);
 module.exports.Schema = ticketSchema;

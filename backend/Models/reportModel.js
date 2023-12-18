@@ -2,9 +2,12 @@ const mongoose = require('mongoose');
 
 const reportSchema = new mongoose.Schema(
   {
-    _id: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
+     // _id: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    // },
+    content: {
+      type : String,
+      required : true , 
     },
     ticketId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -16,33 +19,35 @@ const reportSchema = new mongoose.Schema(
     },
     ticketStatus: {
       type: String,
-      required : true,
     },
+
     resolutionTime: {
       type: Date,
-      required : true,
     },
     agentRating: {
-      type: Int32,
+      type: Number,
+      required : false,
+    },
+
+    openTicket:{
+      type : Number ,
       required : true,
     },
-    createdBy: {  //managerId
-      type: mongoose.Schema.Types.ObjectId,
-      ref : 'userModel',
-      required: true,
-      // validate: {
-      //   validator: async function (value) {
-      //     const user = await mongoose.model('userModel').findById(value);
-      //     return user && user.userRole === 'manager';
-      //   },
-      //   message: 'The createdBy field must be a manager.',
-      // },
+    closeTicket:{
+      type : Number ,
+      required : true,
     },
+    pendingTicket:{
+      type : Number ,
+      required : true,
+    },
+   
+
   },
   // schemaOptions
   {
-    strict: true,
-    timestamps: true,
+    strict: false,
+    timestamps: false,
   }
 );
 
