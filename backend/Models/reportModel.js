@@ -6,6 +6,7 @@ const reportSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
+<<<<<<< HEAD
     ticketId: {
       type: mongoose.Schema.Types.ObjectId,
       ref : 'ticketModel',
@@ -18,11 +19,19 @@ const reportSchema = new mongoose.Schema(
       type: String,
       required : true,
     },
+=======
+    content: {
+      type : String,
+      required : true , 
+    },
+
+>>>>>>> origin/lisa
     resolutionTime: {
       type: Date,
       required : true,
     },
     agentRating: {
+<<<<<<< HEAD
       type: Int32,
       required : true,
     },
@@ -38,6 +47,26 @@ const reportSchema = new mongoose.Schema(
       //   message: 'The createdBy field must be a manager.',
       // },
     },
+=======
+      type: Number,
+      required : true,
+    },
+
+    openTicket:{
+      type : Number ,
+      required : true,
+    },
+    closeTicket:{
+      type : Number ,
+      required : true,
+    },
+    pendingTicket:{
+      type : Number ,
+      required : true,
+    },
+   
+
+>>>>>>> origin/lisa
   },
   // schemaOptions
   {

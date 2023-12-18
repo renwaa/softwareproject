@@ -1,55 +1,128 @@
-const userModel = require("../Models/userModel");
+const { default: mongoose } = require("mongoose");
+const FAQModel = require("../Models/FAQModel");
 const ticketModel = require("../Models/ticketModel");
-const jwt = require("jsonwebtoken");
-require('dotenv').config();
-const secretKey =process.env.SECRET_KEY ;
-const bcrypt = require("bcrypt");
+const userModel = require("../Models/userModel");
+const { getCurrentUser } = require("./authController");
+
 const agentController = {
-  closeTicket: async (req, res) => {
-    try {
-        const { ticketId } = req.params;
-
-        const existingTicket = await ticketModel.findOne({ _id: ticketId });
-        if (existingTicket.status === 'closed') {
-          return res.status(400).json({ error: 'Ticket is already closed' });
-        }  
-        // Assuming you have a "status" field in your ticket model
-        const updatedTicket = await ticketModel.findOneAndUpdate(
-            { _id: ticketId },
-            { $set: { status: 'closed', endedAt: new Date() } },
-            { new: true } // Return the updated document
-        );
-
-        if (!updatedTicket) {
-            return res.status(404).json({ error: 'Ticket not found' });
+    addFAQ: async(req , res) =>{
+        try{
+    
+          const fq =  { question , answer } = req.body;
+    
+          if(await FAQModel.findOne({fq})){
+            return res.status(409).json({ message: "FAQ already exists" });
+          }
+    
+          const newFAQ = new FAQModel({
+            question,
+            answer,
+          });
+    
+          await newFAQ.save();
+          res.status(201).json({ message: " FAQ added successfully" });
+    
+        } catch(error){
+          return res.status(500).json({ message: error.message });
         }
-        
-        res.status(200).json({ message: 'Ticket closed successfully', ticket: updatedTicket });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-},
-    getAllTickets: async (req, res) => {
+      },
+
+    deleteFAQ: async(req, res) => {
         try {
-            const tickets = await ticketModel.find();
-            return res.status(200).json({ tickets });
-          } catch (error) {
-            return res.status(500).json({ message: error.message });
-          }
-      
+    
+            const id = req.params.id;
+    
+            const deletedFAQ = await FAQModel.deleteOne({ _id: id });
+    
+            if (deletedFAQ.deletedCount === 0) {
+                return res.status(404).json({ message: "FAQ not found" });
+            }
+    
+            res.status(200).json({ message: "FAQ deleted successfully" });
+    
+        } catch (error) {
+            return res.status(500).json({ message: error.message });
+        }
     },
-    getAllOpenTickets: async (req, res) => {
+
+
+   
+
+    updateTicket: async (req, res) => {
       try {
-       const tickets = await ticketModel.find({ status: 'Open' });
-       const openTicketsCount = tickets.length;
-       console.log("tickets count:", openTicketsCount)
-        return res.status(200).json({ tickets });
-      
+        agent = await getCurrentUser(req);
+        // console.log("agent", agent);
+    
+        let id = req.params.id;
+        console.log("id:", id);
+    
+        const ticket = await ticketModel.findById(id);
+        
+    
+        const sol = req.body.solution;
+        let ticketArray = [];
+        ticketArray = agent.tickets;
+        console.log("ticketArray" , ticketArray)
+    
+        // Check if the ticket ID is in the agent's ticketArray
+        if (!ticketArray.includes(id)) {
+          return res.status(404).send("Agent does not have this ticket");
+        }
+    
+        if (!ticket) {
+          return res.status(500).send("This ticket does not exist");
+        }
+    
+        if (ticket.status == "close" || ticket.status == "open") {
+          return res
+            .status(500)
+            .send(
+              "Ticket status must be pending, this ticket was either open or already closed"
+            );
+        }
+    
+        // Update ticket content
+        ticket.solution = sol;
+        ticket.status = "close";
+        await ticket.save();
+    
+        
+        // Remove the closed ticket from ticketArray
+        const updatedTicketArray = ticketArray.filter((ticketId) => ticketId.toString() !== id);
+
+        // let updatedTicketArray = [];
+        // ticketArray.forEach(ticket => {
+        //   if(ticket.toString()!== id ){
+        //    updatedTicketArray.push(ticket);
+        //   }
+          
+        // });
+        console.log(updatedTicketArray);
+        agent.tickets = updatedTicketArray;
+        await agent.save();
+    
+        // Send email notification
+        const userId = ticket.userId;
+        const user = await userModel.findById(userId);
+    
+        user.notify = true;
+        await user.save();
+    
+        return res.status(200).json({
+          message: "Ticket updated successfully",
+          ticket: ticket,
+          user: user,
+        });
       } catch (error) {
-           return res.status(500).json({ message: error.message });
-      }
-      },
+        console.error("Error updating ticket:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+      }
+    },
+    
+
+    
       
-};
-module.exports = agentController;
+ };
+
+module.exports = agentController;
+    

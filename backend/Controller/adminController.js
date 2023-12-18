@@ -1,5 +1,6 @@
 const userModel = require("../Models/userModel");
-const sessionModel = require("../Models/sessionModel")
+const sessionModel = require("../Models/sessionModel");
+const mongoose = require('mongoose');
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const secretKey = process.env.SECRET_KEY;
@@ -32,20 +33,40 @@ const adminController = {
         role: 'user', // Set the role to "user"
       });
 
-      //not sure
-      await db.users.insertOne({ newUser });
+      await newUser.save();
 
       return res.status(200).json({ msg: "User account created successfully" });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
   },
-  updateUserRole: async (req, res) => {
+  deleteUserAcc: async (req, res) => {
+    try {
+      const { targetUserId } = req.body;
+
+      if (req.user.role !== 'admin' && req.user.userId !== req.params.id) {
+        return res.status(403).json({ msg: "Access denied. Only admins can delete user accounts." });
+      }
+
+      // Check if the target user exists
+      const targetUser = await userModel.findById(targetUserId);
+
+      if (!targetUser) {
+        return res.status(404).json({ msg: "Target user not found" });
+      }
+
+      await targetUser.deleteOne();
+
+      return res.status(200).json({ msg: "User account deleted successfully" });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+  updateRole: async (req, res) => {
     try {
       // const { userId } = req.user;
       const { targetUserId, newRole } = req.body;
 
-      // Check if the requester is an admin
       if (req.user.role !== 'admin'&& req.user.userId !== req.params.id) {
         return res.status(403).json({ msg: "Access denied. Only admins can update user roles." });
       }

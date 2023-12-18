@@ -8,5 +8,6 @@ const authorizationMiddleware = require("../Middleware/authorizationMiddleware")
 
 
 router.post("/createuser",authorizationMiddleware(['admin']),adminController.createUserAcc);
-router.put("/updateuserrole",authorizationMiddleware(['admin']),adminController.updateUserRole);
+router.delete("/deleteuser", authorizationMiddleware(['admin']), adminController.deleteUserAcc);
+router.put("/updaterole",authorizationMiddleware(['admin']),adminController.updateRole);
 module.exports = router; // ! Don't forget to export the router

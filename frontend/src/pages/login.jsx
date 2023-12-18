@@ -3,7 +3,6 @@ import '../stylesheets/auth.css'; // Your custom styles
 
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import AppNavBar from "../components/navbar";
 import axios from "axios";
 let backend_url = "http://localhost:3000/api/v1";
 
@@ -35,16 +34,21 @@ const Login = () => {
         },
         { withCredentials: true }
       );
-
+      
       const { status, data } = response;
 
       if (status === 200) {
-        localStorage.setItem("userId", response.data.user._id);
+        console.log("RESPONSEEEEE: " , response.data); 
+        console.log("USERRRRR: " , response.data.user._id);
+        localStorage.setItem("userId",response.data.user._id);
         localStorage.setItem("role", response.data.user.role);
-        setSucessMessage("Login successful");
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
+        console.log("ID FROM LOCAL STRORAGE" ,localStorage);
+        if(response.data.user.mfaEnabled) {
+           navigate(`/mfa`);
+        } else {
+          navigate(`/`);
+        }
+    
       } else {
         setErrorMessage("Login failed");
       }
@@ -60,7 +64,6 @@ const Login = () => {
 
   return (
     <>
-      <AppNavBar /> {/* Include the navigation bar at the top of the Login page */}
       <div className="form_container">
         <h2>Login Account</h2>
         <form onSubmit={handleSubmit}>
@@ -89,7 +92,7 @@ const Login = () => {
             {errorMessage} {successMessage}
           </span>
           <span>
-            Already have an account? <Link to={"/signup"}>Signup</Link>
+            Don't have an account? <Link to={"/signup"}>Signup</Link>   
           </span>
         </form>
       </div>

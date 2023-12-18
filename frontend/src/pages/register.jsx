@@ -9,17 +9,17 @@ const Signup = () => {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     firstName: "",
-    lastName : "",
+    secondName : "",
     email: "",
     password: "",
     username: "",
-    role:""
+    mfaEnabled: false,
   });
 
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const { firstName , lastName , email, password, username ,role   } = inputValue;
+  const { firstName , secondName , email, password, username , mfaEnabled  } = inputValue;
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -46,13 +46,14 @@ const Signup = () => {
       if (status === 201) {
         setSuccessMessage("SignUp successful");
         setTimeout(() => {
-          navigate("/");
+          navigate("/login");
         }, 1000);
       } else {
         setErrorMessage(data.message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      console.error(error.response?.data); // Log the response data if available
       setErrorMessage(error.message);
     }
 
@@ -63,87 +64,86 @@ const Signup = () => {
     email: "",
     password: "",
     username: "",
-    role:""
+    mfaEnabled: false,
     });
   };
 
   return (
-  <div className="form_container">
-    <h2>Signup Account</h2>
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="email">Email</label>
-        <input
-          type="email"
-          name="email"
-          value={email}
-          placeholder="Enter your email"
-          onChange={handleOnChange}
-        />
-      </div>
-      <div>
-        <label htmlFor="username">Username</label>
-        <input
-          type="text"
-          name="username"
-          value={username}
-          placeholder="Enter your username"
-          onChange={handleOnChange}
-        />
-      </div>
-      <div>
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          name="password"
-          value={password}
-          placeholder="Enter your password"
-          onChange={handleOnChange}
-        />
-      </div>
-      <div>
-        <label htmlFor="firstName">First Name</label>
-        <input
-          type="text"
-          name="firstName"
-          value={firstName}
-          placeholder="Enter your first name"
-          onChange={handleOnChange}
-        />
-      </div>
-      <div>
-        <label htmlFor="lastName">Last Name</label>
-        <input
-          type="text"
-          name="lastName"
-          value={lastName}
-          placeholder="Enter your last name"
-          onChange={handleOnChange}
-        />
-      </div>
-      <div>
-        <label htmlFor="role">Role</label>
-        <select
-          name="role"
-          value={role}
-          onChange={handleOnChange}
-        >
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
-          {/* Add other role options as needed */}
-        </select>
-      </div>
-      <button type="submit">Submit</button>
-      <span>
-        {errorMessage} {successMessage}
-      </span>
-      <span>
-        Already have an account? <Link to={"/api/v1/login"}>Login</Link>
-      </span>
-    </form>
-  </div>
-);
-
+    <div className="form_container">
+      <h2>Signup Account</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            name="email"
+            value={email}
+            placeholder="Enter your email"
+            onChange={handleOnChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            name="username"
+            value={username}
+            placeholder="Enter your username"
+            onChange={handleOnChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            name="password"
+            value={password}
+            placeholder="Enter your password"
+            onChange={handleOnChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="firstName">First Name</label>
+          <input
+            type="text"
+            name="firstName"
+            value={firstName}
+            placeholder="Enter your first name"
+            onChange={handleOnChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="secondName">Second Name</label>
+          <input
+            type="text"
+            name="secondName"
+            value={secondName}
+            placeholder="Enter your second name"
+            onChange={handleOnChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="mfaEnabled">Enable Multi-Factor Authentication</label>
+          <select
+            name="mfaEnabled"
+            value={mfaEnabled}
+            onChange={handleOnChange}
+          >
+            <option value={true}>Yes</option>
+            <option value={false}>No</option>
+          </select>
+        </div>
+        <button type="submit">Submit</button>
+        <span>
+          {errorMessage} {successMessage}
+        </span>
+        <span>
+          Already have an account? <Link to={"/api/v1/login"}>Login</Link>
+        </span>
+      </form>
+    </div>
+  );
+  
 };
 
 export default Signup;
