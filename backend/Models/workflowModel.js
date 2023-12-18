@@ -23,8 +23,7 @@ const workflowSchema = new mongoose.Schema(
       required: true,
     },
     customWorkflow: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: workflowModel,
+      type:String,
       required: true,
     },
   },
