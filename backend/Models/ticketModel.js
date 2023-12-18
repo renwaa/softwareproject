@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 const ticketSchema = new mongoose.Schema(
   {
-    _id: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-    },
+    // _id: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   required: true,
+    // },
     priority: {
       type: String,
       enum: ['high', 'medium', 'low'],
@@ -19,11 +19,14 @@ const ticketSchema = new mongoose.Schema(
     agent: {
       type: String,
       enum: ['agent1' , 'agent2' , 'agent3'],
-      required: true,
+      required: false,
     },
+    issueDescription: {
+      type: String,
+      required: true,
+    },  
     createdAt: {
       type: Date,
-      required: true,
     },
     endedAt: {
       type: Date,
@@ -31,12 +34,12 @@ const ticketSchema = new mongoose.Schema(
     modifiedAt: {
       type: Date,
     },
-    resolutionTime: {
+    timeOfRes: {
       type: Date,
     },
     solution: {
       type: String,
-      required: true,
+      required: false,
     },
     status: {
       type: String,
@@ -61,7 +64,7 @@ const ticketSchema = new mongoose.Schema(
     agentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref : 'userModel',
-      required: true,
+      required: false,
     },
   },
   // schemaOptions
@@ -71,12 +74,12 @@ const ticketSchema = new mongoose.Schema(
   }
 );
 
-ticketSchema.virtual('resolutionTime').get(function () {
-  if (this.endedAt) {
-    return this.endedAt - this.createdAt;
-  }
-  return null;
-});
+// ticketSchema.virtual('resolutionTime').get(function () {
+//   if (this.endedAt) {
+//     return this.endedAt - this.createdAt;
+//   }
+//   return null;
+// });
 
 module.exports = mongoose.model('ticketModel', ticketSchema);
 module.exports.Schema = ticketSchema;

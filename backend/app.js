@@ -2,13 +2,15 @@ const express = require("express");
 const cookieParser=require('cookie-parser')
 const app = express();
 const mongoose = require("mongoose");
-const productRouter = require("./Routes/products");
-const userRouter = require("./Routes/users");
-const authRouter = require("./Routes/auth");
+const agentRouter = require ("../backend/Routes/agentRouter");
+const userRouter = require("../backend/Routes/userRouter");
+// const userRouter = require("./Routes/users");
+const authRouter = require("../backend/Routes/auth");
 require('dotenv').config();
 
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
+const authorizationMiddleware = require("./Middleware/authorizationMiddleware");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -35,6 +37,11 @@ app.use(
 
 app.use("/api/v1", authRouter);
 app.use(authenticationMiddleware);
+
+app.use("/api/v1", agentRouter);
+app.use("/api/v1/user", userRouter);
+app.use(authorizationMiddleware);
+// app.use("/api/v1/users",userRouter);
 
 
 const db_name = process.env.DB_NAME;
