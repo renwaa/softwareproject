@@ -5,6 +5,7 @@ import Homepage from "./pages/HomePage";;
 import Login from "./pages/login";
 import Signup from "./pages/register";
 import MFA from "./pages/MFA";
+import FAQ from "./pages/FAQ";
 
 function App() {
   return (
@@ -12,7 +13,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login  />} />
           <Route path="/signup" element={<Signup/>}/>
-          <Route path="/" element={<Homepage />} />
+          <Route path="/homepage" element={<Homepage />} />
           <Route path="/mfa" element={<MFA />} />
         </Routes>
     </>

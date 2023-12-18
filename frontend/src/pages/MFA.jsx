@@ -41,7 +41,7 @@ const MFA = () => {
       if (status === 200) {
         setSucessMessage("MFA verification successful");
         // Redirect to another page after successful MFA verification
-        navigate("/");
+        navigate("/homepage");
       } else {
         setErrorMessage("MFA verification failed");
       }
