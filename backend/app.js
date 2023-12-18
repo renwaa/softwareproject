@@ -2,11 +2,9 @@ const express = require("express");
 const cookieParser=require('cookie-parser')
 const app = express();
 const mongoose = require("mongoose");
+const productRouter = require("./Routes/products");
 const userRouter = require("./Routes/users");
-const authRouter = require("./Routes/auth"); 
-const adminRouter = require("../backend/Routes/adminRouter");
-const agentRouter = require("../backend/Routes/agent");
-
+const authRouter = require("./Routes/auth");
 require('dotenv').config();
 
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
@@ -37,9 +35,6 @@ app.use(
 
 app.use("/api/v1", authRouter);
 app.use(authenticationMiddleware);
-app.use("/api/v1/users", userRouter);
-app.use("/api/v1/admin",adminRouter);
-app.use("/api/v1/agent", agentRouter);
 
 
 const db_name = process.env.DB_NAME;
@@ -55,11 +50,12 @@ const connectionOptions = {
   useNewUrlParser: true,
 };
 
-const mongoURI = 'mongodb://127.0.0.1:27017/SoftwareProject';
-mongoose.connect(mongoURI) .then(() => console.log("mongoDB connected"))
-.catch((e) => {
-  console.log(e);
-});
+mongoose
+  .connect(db_url, connectionOptions)
+  .then(() => console.log("mongoDB connected"))
+  .catch((e) => {
+    console.log(e);
+  });
 
 app.use(function (req, res, next) {
   return res.status(404).send("404");

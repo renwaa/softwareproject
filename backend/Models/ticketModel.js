@@ -31,7 +31,7 @@ const ticketSchema = new mongoose.Schema(
     modifiedAt: {
       type: Date,
     },
-    timeofR: {
+    resolutionTime: {
       type: Date,
     },
     solution: {
