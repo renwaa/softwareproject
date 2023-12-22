@@ -4,8 +4,8 @@ import axios from "axios";
 
 
 const backend_url = "http://localhost:3000/api/v1";
+export default function Signup(){
 
-const Signup = () => {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     firstName: "",
@@ -144,6 +144,6 @@ const Signup = () => {
   </div>
 );
 
-};
+}
 
-export default Signup;
+//export default Signup;

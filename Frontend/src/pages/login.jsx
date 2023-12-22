@@ -37,12 +37,15 @@ const Login = () => {
       );
 
       const { status, data } = response;
-
+      const authToken = data.token; 
+      localStorage.setItem("authToken", authToken); 
+   
       if (status === 200) {
         localStorage.setItem("userId", response.data.user._id);
         localStorage.setItem("role", response.data.user.role);
         setSucessMessage("Login successful");
         setTimeout(() => {
+          navigate('/Main');
           navigate("/");
         }, 1000);
       } else {
@@ -57,7 +60,7 @@ const Login = () => {
       password: "",
     });
   };
-
+  
   return (
     <>
       <AppNavBar /> {/* Include the navigation bar at the top of the Login page */}

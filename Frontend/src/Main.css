@@ -1,0 +1,20 @@
+/* MainPage.css */
+
+.main-page-container {
+    background-image: url('backgroundWeb.png');   
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-group {
+    text-align: center;
+}
+
+.main-button {
+    margin: 10px;
+    width: 200px; /* Adjust width as needed */
+}

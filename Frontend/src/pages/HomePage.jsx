@@ -6,8 +6,7 @@ import '../HomePage.css';
 import AppNavBar from '../components/AppNavBar';
 import { Link } from 'react-router-dom';
 
-
-const HomePage = () => {
+export default function HomePage() {
   return (
     <>
       <AppNavBar />
@@ -47,7 +46,7 @@ const HomePage = () => {
             <p>
               Join us in providing efficient support, enhancing communication, and delivering exceptional user experiences.
             </p>
-            <Link to="/register" className="btn btn-primary" style={{ width: '175px', height: '40px' }}>
+            <Link to="/signup" className="btn btn-primary" style={{ width: '175px', height: '40px' }}>
               Sign Up for Free
             </Link>
           </Col>
@@ -58,6 +57,6 @@ const HomePage = () => {
       </Container>
     </>
   );
-};
+}
 
-export default HomePage;
+//export default HomePage;
