@@ -1,69 +1,106 @@
-// Import necessary libraries and components
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import axios from "axios";
+let backend_url = "http://localhost:3000/api/v1";
 
 const FaqPage = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [faqs, setFaqs] = useState([]);
-  const [filteredFaqs, setFilteredFaqs] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [searchResultsMessage, setSearchResultsMessage] = useState("");
+
+  const fetchFaqs = async () => {
+    try {
+      const response = await axios.get(`${backend_url}/getFAQs`, {
+        withCredentials: true,
+      });
+      setFaqs(response.data.faqs);
+    } catch (error) {
+      console.error("Error fetching FAQs", error.message);
+    }
+  };
 
   useEffect(() => {
-    // Fetch FAQs from the backend when the component mounts
-    const fetchFaqs = async () => {
-      try {
-        const response = await axios.get(`${backend_url}/faqs`);
-        setFaqs(response.data); // Assuming your backend API returns an array of FAQs
-        setFilteredFaqs(response.data); // Initially, set filtered FAQs to all FAQs
-      } catch (error) {
-        console.error("Error fetching FAQs", error.message);
-      }
-    };
-
     fetchFaqs();
-  }, []); // Empty dependency array to fetch FAQs only once when the component mounts
+  }, []);
 
-  const handleSearch = () => {
-    // Filter FAQs based on the search query
-    const filteredResults = faqs.filter((faq) =>
-      faq.question.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredFaqs(filteredResults);
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.get(`${backend_url}/searchFAQ`, {
+        params: { search: searchText },
+        withCredentials: true,
+      });
+      const searchResults = response.data;
+      setFaqs(searchResults);
+      setSearchResultsMessage(searchResults.length === 0 ? "No results found" : "");
+    } catch (error) {
+      console.error("Error searching FAQs", error.message);
+    }
+  };
+
+  const resetSearch = async () => {
+    fetchFaqs(); // Fetch all FAQs again
+    setSearchResultsMessage("");
   };
 
   return (
-    <>
-      <div className="search-bar">
-        <h2>Search FAQs</h2>
-        <input
-          type="text"
-          placeholder="Search for FAQs..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <button onClick={handleSearch}>Search</button>
-      </div>
-
-      <div className="faq-list">
-        <h2>Frequently Asked Questions</h2>
-        {filteredFaqs.length === 0 ? (
-          <p>No FAQs found.</p>
-        ) : (
-          <ul>
-            {filteredFaqs.map((faq) => (
-              <li key={faq.id}>
-                <strong>Q: {faq.question}</strong>
-                <p>A: {faq.answer}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      <div>
-        <Link to="/">Back to Home</Link>
-      </div>
-    </>
+    <div>
+      <nav className="navbar bg-body-tertiary-dark">
+        <div className="container-fluid d-flex justify-content-between align-items-center">
+          <div>
+            <a className="navbar-brand">Desk Help</a>
+            <form className="d-flex" onSubmit={handleSearch}>
+              <input
+                className="form-control me-2"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+              />
+              <button className="btn btn-outline-success" type="submit">
+                Search
+              </button>
+            </form>
+          </div>
+          <div>
+            <button className="btn btn-outline-primary" onClick={resetSearch}>
+              Show All FAQs
+            </button>
+          </div>
+        </div>
+      </nav>
+      <h2>Frequently Asked Questions</h2>
+      {searchResultsMessage ? (
+        <p>{searchResultsMessage}</p>
+      ) : (
+        <div className="accordion accordion-borderless" id="accordionflushExampleX">
+          {faqs.map((faq, index) => (
+            <div className="accordion-item" key={index}>
+              <h2 className="accordion-header" id={`flush-heading${index}X`}>
+                <button
+                  className="accordion-button"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target={`#flush-collapse${index}X`}
+                  aria-expanded="false"
+                  aria-controls={`flush-collapse${index}X`}
+                >
+                  {faq.question}
+                </button>
+              </h2>
+              <div
+                id={`flush-collapse${index}X`}
+                className="accordion-collapse collapse"
+                aria-labelledby={`flush-heading${index}X`}
+                data-bs-parent="#accordionflushExampleX"
+              >
+                <div className="accordion-body">{faq.answer}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 

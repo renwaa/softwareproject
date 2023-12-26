@@ -33,7 +33,7 @@
   app.use(authenticationMiddleware);
   app.use("/api/v1" ,userRouter );
   app.use("/api/v1" ,agentRouter );
-  app.use("/api/v1" ,realTimeChatRouter );
+  app.use("/api/v1/realTimeChat" ,realTimeChatRouter );
   app.use("/api/v1" ,systemRouter);
 
 

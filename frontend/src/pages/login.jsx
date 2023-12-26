@@ -38,22 +38,24 @@ const Login = () => {
       const { status, data } = response;
 
       if (status === 200) {
-        console.log("RESPONSEEEEE: " , response.data); 
-        console.log("USERRRRR: " , response.data.user._id);
         localStorage.setItem("userId",response.data.user._id);
         localStorage.setItem("role", response.data.user.role);
-        console.log("ID FROM LOCAL STRORAGE" ,localStorage);
+        localStorage.setItem("username", response.data.user.username);
+        console.log("LOCAL STRORAGE" ,localStorage);
         if(response.data.user.mfaEnabled) {
            navigate(`/mfa`);
         } else {
-          navigate(`/`);
+          const authToken = data.token; 
+          localStorage.setItem("authToken", authToken); 
+          navigate(`/homepage`);
+
         }
     
       } else {
         setErrorMessage("Login failed");
       }
     } catch (error) {
-      setErrorMessage(error.message);
+      setErrorMessage("Can not login password or email are incorrect.");
     }
     setInputValue({
       ...inputValue,
@@ -63,40 +65,55 @@ const Login = () => {
   };
 
   return (
-    <>
-      <div className="form_container">
-        <h2>Login Account</h2>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={email}
-              placeholder="Enter your email"
-              onChange={handleOnChange}
-            />
+    <div className="container d-flex align-items-center justify-content-center min-vh-100" style={{ backgroundColor: 'white' }}>
+      <div className="row">
+        <div className="col-20 col-md-30 col-lg-40">
+          <div className="card shadow">
+            <div className="card-body p-5"> 
+              <h2 className="card-title text-center mb-4">Login Account</h2>
+              
+              {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
+  
+              {/* Email and Password Login Form */}
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label htmlFor="email" className="form-label">Email</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="email"
+                    name="email"
+                    value={email}
+                    placeholder="Enter your email"
+                    onChange={handleOnChange}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="password" className="form-label">Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="password"
+                    name="password"
+                    value={password}
+                    placeholder="Enter your password"
+                    onChange={handleOnChange}
+                    required
+                  />
+                </div>
+                <div className="d-grid gap-2">
+                  <button type="submit" className="btn btn-primary w-100">Login</button>
+                </div>
+                <p className="mt-3 text-center">
+                  Don't have an account? <Link to="/register" className="link-primary">Signup</Link>
+                </p>
+              </form>
+            </div>
           </div>
-          <div>
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={password}
-              placeholder="Enter your password"
-              onChange={handleOnChange}
-            />
-          </div>
-          <button type="submit">Submit</button>
-          <span>
-            {errorMessage} {successMessage}
-          </span>
-          <span>
-            Don't have an account? <Link to={"/signup"}>Signup</Link>   
-          </span>
-        </form>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

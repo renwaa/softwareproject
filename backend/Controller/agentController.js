@@ -104,6 +104,37 @@ const agentController = {
         // Send email notification
         const userId = ticket.userId;
         const user = await userModel.findById(userId);
+
+            // Check if the user has an email address
+    if (!user.email) {
+      return res.status(500).json({ message: 'User does not have an email address' });
+    }
+
+    // Notify user by email
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.office365.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: "softwareDeskHelp@outlook.com",
+        pass: "softwareDeskHelp2003",
+      },
+    });
+
+    const mailOptions = {
+      from: 'softwareDeskHelp@outlook.com',
+      to: user.email,
+      subject: 'Ticket Update Notification',
+      text: Dear `${user.firstName} ${user.secondName},\n\nYour ticket has been updated. Please check your account to view your ticket`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Error sending email:', error);
+      } else {
+        console.log('Email sent:', info.response);
+      }
+    });
     
         user.notify = true;
         await user.save();

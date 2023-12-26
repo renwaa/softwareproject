@@ -1,15 +1,20 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const backend_url = "http://localhost:3000/api/v1";
 
 const Signup = () => {
+  const buttonStyle = {
+    width: '100px',  // Adjust width as needed
+    height: '50px',  // Adjust height as needed
+    fontSize: '15px' // Adjust font size as needed
+};
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     firstName: "",
-    secondName : "",
+    secondName: "",
     email: "",
     password: "",
     username: "",
@@ -18,8 +23,7 @@ const Signup = () => {
 
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-
-  const { firstName , secondName , email, password, username , mfaEnabled  } = inputValue;
+  const { firstName, secondName, email, password, username, mfaEnabled } = inputValue;
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -42,108 +46,70 @@ const Signup = () => {
         { withCredentials: true }
       );
 
-      const { status, data } = response;
-      if (status === 201) {
+      if (response.status === 201) {
         setSuccessMessage("SignUp successful");
         setTimeout(() => {
           navigate("/login");
         }, 1000);
       } else {
-        setErrorMessage(data.message);
+        setErrorMessage(response.data.message);
       }
     } catch (error) {
       console.error(error);
-      console.error(error.response?.data); // Log the response data if available
-      setErrorMessage(error.message);
+      setErrorMessage(error.response?.data?.message || error.message);
     }
-
-    setInputValue({
-      ...inputValue,
-    firstName: "",
-    lastName : "",
-    email: "",
-    password: "",
-    username: "",
-    mfaEnabled: false,
-    });
   };
 
   return (
-    <div className="form_container">
-      <h2>Signup Account</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={email}
-            placeholder="Enter your email"
-            onChange={handleOnChange}
-          />
+    <div className="container d-flex align-items-center justify-content-center min-vh-100">
+      <div className="row">
+        <div className="col-40 col-md-70 col-lg-100">
+          <div className="card shadow">
+            <div className="card-body p-5">
+              <h2 className="card-title text-center mb-4">Signup Account</h2>
+              {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
+              {successMessage && <div className="alert alert-success" role="alert">{successMessage}</div>}
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label htmlFor="firstName" className="form-label">First Name</label>
+                  <input type="text" className="form-control" name="firstName" value={firstName} placeholder="Enter your first name" onChange={handleOnChange} required />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="secondName" className="form-label">Second Name</label>
+                  <input type="text" className="form-control" name="secondName" value={secondName} placeholder="Enter your second name" onChange={handleOnChange} required />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="email" className="form-label">Email</label>
+                  <input type="email" className="form-control" name="email" value={email} placeholder="Enter your email" onChange={handleOnChange} required />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="username" className="form-label">Username</label>
+                  <input type="text" className="form-control" name="username" value={username} placeholder="Enter your username" onChange={handleOnChange} required />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="password" className="form-label">Password</label>
+                  <input type="password" className="form-control" name="password" value={password} placeholder="Enter your password" onChange={handleOnChange} required />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="mfaEnabled" className="form-label">Enable Multi-Factor Authentication</label>
+                  <select className="form-control" name="mfaEnabled" value={mfaEnabled} onChange={handleOnChange}>
+                    <option value={true}>Yes</option>
+                    <option value={false}>No</option>
+                  </select>
+                </div>
+                <div className="d-grid gap-2">
+                <button type="submit" className="btn btn-primary" style={buttonStyle}>Sign up </button>
+                </div>
+                <p className="mt-3 text-center">
+                  Already have an account? <Link to="/login" className="link-primary">Login</Link>
+                </p>
+              </form>
+            </div>
+          </div>
         </div>
-        <div>
-          <label htmlFor="username">Username</label>
-          <input
-            type="text"
-            name="username"
-            value={username}
-            placeholder="Enter your username"
-            onChange={handleOnChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            name="password"
-            value={password}
-            placeholder="Enter your password"
-            onChange={handleOnChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="firstName">First Name</label>
-          <input
-            type="text"
-            name="firstName"
-            value={firstName}
-            placeholder="Enter your first name"
-            onChange={handleOnChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="secondName">Second Name</label>
-          <input
-            type="text"
-            name="secondName"
-            value={secondName}
-            placeholder="Enter your second name"
-            onChange={handleOnChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="mfaEnabled">Enable Multi-Factor Authentication</label>
-          <select
-            name="mfaEnabled"
-            value={mfaEnabled}
-            onChange={handleOnChange}
-          >
-            <option value={true}>Yes</option>
-            <option value={false}>No</option>
-          </select>
-        </div>
-        <button type="submit">Submit</button>
-        <span>
-          {errorMessage} {successMessage}
-        </span>
-        <span>
-          Already have an account? <Link to={"/api/v1/login"}>Login</Link>
-        </span>
-      </form>
+      </div>
     </div>
   );
-  
 };
 
 export default Signup;
