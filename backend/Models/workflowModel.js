@@ -13,9 +13,9 @@ const workflowSchema = new mongoose.Schema(
     },
     subCategory: {
       type: String,
-      enum : ['Desktops' ,'Laptops' ,'Printers' ,'Servers' ,'Networking equipment' , 
-      'Operating system' , 'Application software' , 'Custom software' ,'Integration issues' ,
-      ' Email issues' , ' Internet connection problems' ,'Website errors'  ],
+      enum : ['Desktops' ,'Laptops' ,'Printers' ,'Servers' ,'NetworkingEquipment' , 
+      'OperatingSystem' , 'ApplicationSoftware' , 'CustomSoftware' ,'IntegrationIssues' ,
+      ' EmailIssues' , ' InternetConnectionProblems' ,'WebsiteErrors'  ],
       required: true,
     },
     problem: {

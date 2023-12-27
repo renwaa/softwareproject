@@ -21,7 +21,11 @@ const messageSchema = new mongoose.Schema(
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref : "userModel" || "agentModel",
+      // ref : "userModel" || "agentModel",
+      required: true,
+    },
+    creatorName: {
+      type: String,
       required: true,
     },
   },

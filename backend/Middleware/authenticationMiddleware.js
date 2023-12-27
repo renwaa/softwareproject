@@ -17,7 +17,6 @@ module.exports = function authenticationMiddleware(req, res, next) {
   if (!token) {
     return res.status(405).json({ message: "No token provided" , token , cookie });
   }
-  console.log("THIS COOKIE IS FROM AUTHTICATION : " , token);
 
   jwt.verify(token, secretKey, (error, decoded) => {
     if (error) {
@@ -27,5 +26,4 @@ module.exports = function authenticationMiddleware(req, res, next) {
     req.user = decoded.user;
     next();
   });
-  console.log("THIS COOKIE IS FROM AUTHTICATION : " , token);
 };

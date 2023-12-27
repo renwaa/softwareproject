@@ -1,0 +1,40 @@
+/* MainPage.css */
+
+.main-page-container {
+    background-image: url('backgroundWeb.png');   
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-group {
+    text-align: center;
+}
+
+.main-button {
+    margin: 10px;
+    width: 200px; /* Adjust width as needed */
+}
+
+/* Styles for the Generate Report button */
+/* Styles for the Generate Report button */
+.generate-report-button {
+    background-color: blue; /* Blue background */
+    color: white;          /* White text */
+    border: none;          /* Remove default border */
+    padding: 12px 25px;    /* Adjust padding */
+    font-size: 16px;       /* Adjust font size */
+    border-radius: 5px;    /* Adjust border radius */
+    cursor: pointer;       /* Cursor changes to hand on hover */
+    margin-top: 20px;      /* Margin at the top */
+    display: block;        /* Make button a block element */
+    width: auto;           /* Auto width based on content */
+    text-align: center;    /* Center align text */
+}
+
+.generate-report-button:hover {
+    background-color: darkblue; /* Slightly darker blue on hover */
+}

@@ -21,32 +21,19 @@ const MFAController = {
       const mfaSecret = user.mfaSecret;
       console.log("mfaSecret " , user.mfaSecret)
 
-      // const mfaVerified = speakeasy.totp.verify({
-      //   secret: mfaSecret,
-      //   encoding: "base32",
-      //   token: mfaCode,
-      // });
-
-      // if (!mfaVerified) {
-      //   return res.status(403).send("Invalid MFA code");
-      // }
-
       if(mfaCode != user.mfaCode){
         return res.status(403).send("Invalid MFA code");
       }
-      console.log("1111111")
       const currentDateTime = new Date();
-      const expiresAt = new Date(+currentDateTime + 1800000); // expire in 3 minutes
-      console.log("222222222")
+      const expiresAt = new Date(+currentDateTime + 3 * 60 * 60 * 1000); // expire in 3 minutes
       // Generate a JWT token
       const token = jwt.sign(
         { user: { userId: user._id, role: user.role, email: user.email } },
         secretKey,
         {
-          expiresIn: 3 * 60 * 60,
+          expiresIn: 3 * 60 * 60 * 1000,
         }
       );
-      console.log("3333333333")
 
       let newSession = new sessionModel({
         userId: user._id,
@@ -55,7 +42,6 @@ const MFAController = {
       });
 
       await newSession.save();
-      console.log("44444444444")
       //res has token has  cookie
       res.cookie("token", token, {
         expires: expiresAt,
@@ -63,7 +49,6 @@ const MFAController = {
         httpOnly: false,
         SameSite: "none",
       });
-      console.log("44444444444")
       console.log("COOKIE FROM VERIFY MFA: " , token)
 
       // Respond with a success message
