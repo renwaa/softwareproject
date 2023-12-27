@@ -2,11 +2,14 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import AppNavBar from "../components/navbar"; // Assuming you have a navigation bar component
 import axios from "axios";
+import { useCustomization } from "../contexts/CustomizationContext";
+
 let backend_url = "http://localhost:3000/api/v1";
 
 const MFA = () => {
+  const { customization, updateCustomization } = useCustomization();
+
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     mfaCode: "", // Assuming MFA code is entered here
@@ -55,7 +58,13 @@ const MFA = () => {
   };
 
   return (
-    <>
+    < div style={{ 
+      backgroundColor: customization.backgroundColor, 
+      color: customization.fontColor, 
+      fontSize: `${customization.fontSize} px`,
+      minHeight: '100vh'
+  }}
+  >
       <div className="container d-flex align-items-center justify-content-center min-vh-100" style={{ backgroundColor: 'white' }}>
       <div className="row">
         <div className="col-20 col-md-30 col-lg-40">
@@ -92,7 +101,7 @@ const MFA = () => {
         </div>
       </div>
     </div>
-    </>
+    </div>
   );
 };
 

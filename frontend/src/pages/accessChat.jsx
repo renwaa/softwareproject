@@ -3,13 +3,19 @@ import axios from 'axios';
 import { Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom'; // Updated import
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useCustomization } from "../contexts/CustomizationContext";
 
 const userId = localStorage.getItem("userId");
 const role = localStorage.getItem("role");
 let chatId=0;
 let counter =0;
 
+
+
+
 const AccessChat = () => {
+  const { customization, updateCustomization } = useCustomization();
+
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState('');
   const navigate = useNavigate();
@@ -116,7 +122,13 @@ const AccessChat = () => {
 
 
   return (
-    <>
+    < div style={{ 
+      backgroundColor: customization.backgroundColor, 
+      color: customization.fontColor, 
+      fontSize: `${customization.fontSize} px`,
+      minHeight: '100vh'
+  }}
+  >
    
    {showAlert ? (
     <div className="row no-gutters">
@@ -199,7 +211,7 @@ const AccessChat = () => {
             </div>
           </form>
         </div>
-        </>
+        </div>
   );
 
 };

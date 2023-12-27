@@ -4,6 +4,7 @@
   import '../stylesheets/chat.css';
   import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
+  import { useCustomization } from "../contexts/CustomizationContext";
 
   const userId = localStorage.getItem("userId");
   const role = localStorage.getItem("role");
@@ -12,6 +13,7 @@
   let counter =0;
   let chatEnded = false;
   const Chat = () => {
+    const { customization, updateCustomization } = useCustomization();
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState('');
     const [loading, setLoading] = useState(false);
@@ -133,7 +135,7 @@
     
 
     return (
-      
+      <>
       <div className="container py-5 px-4">
         <header className="text-center">
           <h1 className="display-4 text-white">Chat Room</h1>
@@ -223,7 +225,10 @@
             </form>
           </div>
       </div>
+      </>
     );
+
+ 
     
     
     

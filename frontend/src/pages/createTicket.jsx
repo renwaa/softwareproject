@@ -4,13 +4,16 @@ import '../stylesheets/auth.css'; // Your custom styles
 
 import React, { useState }from "react";
 import { Link, useNavigate } from "react-router-dom";
-import AppNavBar from "../components/navbar";
+import AppNavBarUser from "../components/navbarUser";
 import axios from "axios";
+import { useCustomization } from "../contexts/CustomizationContext";
 
 const backend_url = "http://localhost:3000/api/v1";
 const id = localStorage.getItem("userId");
 console.log(id);
 const CreateTicketPage = () => {
+  const { customization, updateCustomization } = useCustomization();
+
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     name: "",
@@ -114,8 +117,14 @@ const CreateTicketPage = () => {
   };
 
   return (
-    <>
-      <AppNavBar />
+    < div style={{ 
+      backgroundColor: customization.backgroundColor, 
+      color: customization.fontColor, 
+      fontSize: `${customization.fontSize} px`,
+      minHeight: '100vh'
+  }}
+  >
+      <AppNavBarUser />
       <div className="form_container">
         <h2>Create New Ticket</h2>
         <form onSubmit={handleSubmit}>
@@ -209,7 +218,7 @@ const CreateTicketPage = () => {
         </div>
       )}
 
-    </>
+    </div>
   );
 };
 

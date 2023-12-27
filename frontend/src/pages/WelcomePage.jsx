@@ -3,12 +3,15 @@
 import React from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import '../stylesheets/WelcomePage.css';
-import AppNavBar from '../components/navbar';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComments } from '@fortawesome/free-solid-svg-icons';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { useEffect, useState } from 'react';
+import { useCustomization } from "../contexts/CustomizationContext";
+
+
 
 const data = [
   { name: 'Tickets', Resolved: 1254, Active: 327 },
@@ -24,6 +27,9 @@ const barColors = {
 
 
 const WelcomePage = () => {
+  const { customization, updateCustomization } = useCustomization();
+
+
   const navigate = useNavigate();
 
   const redirectToSignup = () => {
@@ -34,7 +40,13 @@ const WelcomePage = () => {
   };
 
   return (
-    <>
+    < div style={{ 
+      backgroundColor: customization.backgroundColor, 
+      color: customization.fontColor, 
+      fontSize: `${customization.fontSize} px`,
+      minHeight: '100vh'
+  }}
+  >
       <Container fluid className="home-container">
         <Row style={{ backgroundColor: '#f8f9fa' }}>
           <Col md={6}>
@@ -74,7 +86,7 @@ const WelcomePage = () => {
           </Col>
         </Row>
       </Container>
-    </>
+      </div>
   );
 };
 

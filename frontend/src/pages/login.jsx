@@ -1,12 +1,18 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../stylesheets/auth.css'; // Your custom styles
+import { useCustomization } from "../contexts/CustomizationContext";
 
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 let backend_url = "http://localhost:3000/api/v1";
 
+
+
+
 const Login = () => {
+  const { customization, updateCustomization } = useCustomization();
+
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     email: "",
@@ -65,6 +71,14 @@ const Login = () => {
   };
 
   return (
+    
+ < div style={{ 
+  backgroundColor: customization.backgroundColor, 
+  color: customization.fontColor, 
+  fontSize: `${customization.fontSize} px`,
+  minHeight: '100vh'
+  }}
+  >
     <div className="container d-flex align-items-center justify-content-center min-vh-100" style={{ backgroundColor: 'white' }}>
       <div className="row">
         <div className="col-20 col-md-30 col-lg-40">
@@ -113,6 +127,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useCustomization } from "../contexts/CustomizationContext";
 
 const backend_url = "http://localhost:3000/api/v1";
 
 const Signup = () => {
+  const { customization, updateCustomization } = useCustomization();
+
   const buttonStyle = {
     width: '100px',  // Adjust width as needed
     height: '50px',  // Adjust height as needed
@@ -61,6 +64,13 @@ const Signup = () => {
   };
 
   return (
+    < div style={{ 
+      backgroundColor: customization.backgroundColor, 
+      color: customization.fontColor, 
+      fontSize: `${customization.fontSize} px`,
+      minHeight: '100vh'
+  }}
+  >
     <div className="container d-flex align-items-center justify-content-center min-vh-100">
       <div className="row">
         <div className="col-40 col-md-70 col-lg-100">
@@ -108,6 +118,7 @@ const Signup = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

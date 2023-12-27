@@ -1,16 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
-// const userController = require("../Controller/userController");
-const authController = require("../Controller/authController");
-const adminController = require("../Controller/adminController");
-const authorizationMiddleware = require("../Middleware/authorizationMiddleware");
+const agentController = require("../Controller/agentController");
 
+router.post("/addFAQ" , agentController.addFAQ);
+router.delete("/deleteFAQ/:id" , agentController.deleteFAQ);
+router.put("/updateTicket/:id" , agentController.updateTicket);
 
-router.get("/getAllUsers",adminController.getAllUsers);
-router.delete("/deleteUserAcc", authorizationMiddleware(['Admin']), adminController.deleteUserAcc);
-router.put("/setRole/:userId", authorizationMiddleware(['Admin']), adminController.setRole);
-router.put("/customize", authorizationMiddleware(['admin']), adminController.customize);
-router.get("/getCustomization", authorizationMiddleware(['admin']), adminController.getCustomization);
-
-module.exports = router; // ! Don't forget to export the router
+module.exports = router;

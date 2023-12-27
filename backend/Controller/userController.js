@@ -28,50 +28,55 @@ const userController={
   
   updateUserProfile: async (req, res) => {
     try {
-      const { userId } = req.user;
+      const { userId, role } = req.user;
       const { firstName, secondName, email, username } = req.body;
 
-      // Ensure the requester is updating their own profile
       if (userId !== req.params.id) {
         return res.status(403).json({ message: "Access denied" });
       }
 
-      // Fetch the existing user data
-      const existingUser = await userModel.findById(req.params.id);
-      if (!existingUser) {
+      // Fetch the existing user data from userModel or agentModel based on role
+      let existingUserData;
+      if (role === 'agent') {
+        existingUserData = await agentModel.findById(req.params.id);
+      } else {
+        existingUserData = await userModel.findById(req.params.id);
+      }
+
+      if (!existingUserData) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      // Update the password if provided or keep the existing password
-      // const updatedPassword = password
-      //   ? await bcrypt.hash(password, 10)
-      //   : existingUser.password;
-
-      // Update other fields
-      const updatedUserFields = {
-        firstName: firstName || existingUser.firstName,
-        secondName: secondName || existingUser.secondName,
-        email: email || existingUser.email,
-        username: username || existingUser.username,
-        // password: updatedPassword,
+      // Update user or agent fields
+      const updatedFields = {
+        firstName: firstName || existingUserData.firstName,
+        secondName: secondName || existingUserData.secondName,
+        email: email || existingUserData.email,
+        username: username || existingUserData.username,
+        // Include additional fields for agents, if applicable
       };
 
-      // Use findByIdAndUpdate to update the user's profile
-      const updatedUser = await userModel.findByIdAndUpdate(
-        req.params.id,
-        updatedUserFields,
-        {
-          new: true, // Return the updated document
-          runValidators: true, // Run validators for schema-defined validation
-        }
-      );
+      let updatedData;
+      if (role === 'agent') {
+        updatedData = await agentModel.findByIdAndUpdate(
+          req.params.id,
+          updatedFields,
+          { new: true, runValidators: true }
+        );
+      } else {
+        updatedData = await userModel.findByIdAndUpdate(
+          req.params.id,
+          updatedFields,
+          { new: true, runValidators: true }
+        );
+      }
 
-      if (!updatedUser) {
+      if (!updatedData) {
         return res.status(404).json({ message: "User not found" });
       }
 
       return res.status(200).json({
-        user: updatedUser,
+        user: updatedData,
         msg: "User profile updated successfully",
       });
     } catch (error) {
@@ -193,59 +198,65 @@ findAvailableAgent: async function() {
   return null;
 },
 
-userRate : async (req, res) => {
-    try {
-      const user = await getCurrentUser(req, res);
-      const userId = user._id;
-      const { ticketId } = req.params;
-      const { rating } = req.body;
+rateAgent: async (req, res) => {
+  try {
+    const user = await getCurrentUser(req, res);
+    const userId = user._id;
+    const { ticketId } = req.params;
+    const newRating = req.body.rating;
 
-      console.log(ticketId)
-     
-      const ticket = await ticketModel.findById(ticketId);
-      console.log("ticket : ", ticket);
-      if (!ticket) {
-        return res.status(404).json({ error: 'Ticket not found' });
-      }
+    console.log(ticketId);
 
-      if (ticket.status !== 'close') {
-        return res.status(400).json({ error: 'Cannot rate an open ticket' });
-      }
-      console.log(ticket)
-      const agent = await agentModel.findById(ticket.agentId);
-  
-      if (!agent) {
-        return res.status(404).json({ error: 'Agent not found' });
-      }
-
-      agent.rating = rating;
-      await agent.save();
-  
-      return res.status(200).json({ message: 'Agent rated successfully' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal server error' });
+    const ticket = await ticketModel.findById(ticketId);
+    console.log("ticket : ", ticket);
+    if (!ticket) {
+      return res.status(404).json({ error: 'Ticket not found' });
     }
-  },
+    console.log("hey");
 
-  viewMyTickets: async (req, res) => {
-    try {
-      console.log("12345678");
-      const userId = req.params;
-      console.log("UserId:", userId.userId); // Debugging line to check userId value
-  
-      // Update the query to match the correct field name in the schema
-      
-      const myTickets = await ticketModel.find({ userId: userId.userId });
-      console.log("user tickets: " , myTickets);
-  
-      res.status(200).json({ myTickets });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+    if (ticket.status !== 'close') {
+      return res.status(400).json({ error: 'Cannot rate an open ticket' });
     }
-  },
+    
+    console.log("Finding agent with ID:", ticket.agentId);
+    const agent = await agentModel.findById(ticket.agentId).populate('tickets');
+    if (!agent) {
+      return res.status(404).json({ error: 'Agent not found' });
+    }
+    console.log("agent",agent);
 
+    // Calculate the new average rating
+    let totalRatings = agent.tickets.length; // Total number of ratings based on tickets
+    let currentAverageRating = agent.rating || 0;
+    let newAverageRating = (currentAverageRating * totalRatings + newRating) / (totalRatings + 1);
+
+    // Update agent's rating
+    agent.rating = newAverageRating;
+    await agent.save();
+
+    return res.status(200).json({ message: 'Agent rated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+},
+viewMyTickets: async (req, res) => {
+  try {
+    console.log("12345678");
+    const userId = req.params;
+    console.log("UserId:", userId.userId); // Debugging line to check userId value
+
+    // Update the query to match the correct field name in the schema
+    
+    const myTickets = await ticketModel.find({ userId: userId.userId });
+    console.log("user tickets: " , myTickets);
+
+    res.status(200).json({ myTickets });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+},
   getWorkflow: async (req, res) => {
     try{
         const {subCategory} = req.params;

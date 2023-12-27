@@ -3,12 +3,21 @@ import axios from 'axios';
 import { Container, Row, Col } from 'react-bootstrap';
 import '../stylesheets/WelcomePage.css'; // Assuming similar styling to WelcomePage
 import '../stylesheets/notifyPopup.css';
-import AppNavBar from '../components/navbar';
+import AppNavBarUser from '../components/navbarUser';
+import AppNavBarAdmin from '../components/navBarAdmin';
 import ButtonsUser from '../components/buttonsUser';
 import ButtonsAdmin from '../components/buttonsAdmin';
+import ButtonsAgent from '../components/buttonsAgent';
+import ButtonsManager from '../components/buttonsManager';
+import { useCustomization } from "../contexts/CustomizationContext";
 
 let counter =0;
+
+
+
 const HomePage = () => {
+  const { customization, updateCustomization } = useCustomization();
+
   const name = localStorage.getItem("username");
   const role = localStorage.getItem("role");
   console.log(name);  
@@ -72,11 +81,18 @@ const HomePage = () => {
   }, []);
 
   return (
-    <>
+    < div style={{ 
+      backgroundColor: customization.backgroundColor, 
+      color: customization.fontColor, 
+      fontSize: `${customization.fontSize} px`,
+      minHeight: '100vh'
+  }}
+  >
 
-{role === "admin" ? (
-      <>
-        <AppNavBar />
+    {
+      role === "admin" ? (
+        <>
+        <AppNavBarAdmin />
         <Container fluid className="home-container">
           <Row className="dashboard-section">
             <Col md={6} className="dashboard-content">
@@ -89,9 +105,24 @@ const HomePage = () => {
           <ButtonsAdmin />
         </Container>
       </>
-    ) : (
-      <>
-        <AppNavBar />
+      ) : role === "manager" ? (
+        <>
+           <AppNavBarAdmin /> 
+       <Container fluid className="home-container">
+         <Row className="dashboard-section">
+           <Col md={6} className="dashboard-content">
+           <h1>Hello Boss, {name} !</h1>
+             <p className="subtext">
+               We are happy to have you again boss. You can moderate everything and view detailed reports and analytics just with the press of a button!
+             </p>
+           </Col>
+           </Row>
+         <ButtonsManager />
+       </Container>
+     </>
+      ) : role === "user" ? (
+        <>
+        <AppNavBarUser />
         <Container fluid className="home-container">
           <Row className="dashboard-section">
             <Col md={6} className="dashboard-content">
@@ -104,7 +135,29 @@ const HomePage = () => {
           <ButtonsUser />
         </Container>
       </>
-    )}
+      ) : role === "agent" ? (
+        <>
+        <AppNavBarAdmin />
+        <Container fluid className="home-container">
+          <Row className="dashboard-section">
+            <Col md={6} className="dashboard-content">
+              <h1>Ready to Continue Working, {name} !</h1>
+              <p className="subtext">
+                We offer around the clock replies. Send us a ticket, chat with one of our agents, and so many more features! .
+              </p>
+            </Col>
+          </Row>
+          <ButtonsAgent />
+        </Container>
+      </>
+      ) : (
+        // Default JSX for other roles or no role
+        <>
+          {/* Default components */}
+        </>
+      )
+    }
+    
 
 
         {hasNotifications && (
@@ -128,7 +181,7 @@ const HomePage = () => {
           </div>
         )}
 
-    </>
+    </div>
   );
 };
 

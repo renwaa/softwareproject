@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import '../stylesheets/notify.css'; // Importing your custom CSS for NotifyPage
-import AppNavBar from "../components/navbar";
+import AppNavBarUser from '../components/navbarUser';
+import { useCustomization } from "../contexts/CustomizationContext";
 
 let backend_url = "http://localhost:3000/api/v1";
 
 const NotifyPage = () => {
+    const { customization, updateCustomization } = useCustomization();
+
     const [notificationMessage, setNotificationMessage] = useState("");
     const [hasNotifications, setHasNotifications] = useState(false);
 
@@ -42,8 +45,14 @@ const NotifyPage = () => {
     }, []);
 
     return (
-        <>
-        <AppNavBar/>
+        < div style={{ 
+            backgroundColor: customization.backgroundColor, 
+            color: customization.fontColor, 
+            fontSize: `${customization.fontSize} px`,
+            minHeight: '100vh'
+        }}
+        >
+        <AppNavBarUser/>
         <div className="notify-container">
             <h2>Notification</h2>
             {hasNotifications ? (
@@ -60,7 +69,7 @@ const NotifyPage = () => {
             </>
             )}
         </div>
-        </>
+        </div>
     );
 };
 

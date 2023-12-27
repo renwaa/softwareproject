@@ -2,12 +2,46 @@ const RealTimeChatModel = require('../Models/realTimeChatModel');
 const messageModel = require('../Models/messageModel');
 const agentModel = require('../Models/agentModel');
 const userModel = require('../Models/userModel');
+const crypto = require('crypto');
+
 
  
 const mongoose = require('mongoose');
 
-const realTimeChatController = {
 
+
+const encrypt = (text, secretKey) => {
+  // Hash the key to ensure it's 32 bytes long
+  const hash = crypto.createHash('sha256');
+  hash.update(secretKey);
+  const hashedKey = hash.digest();
+
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv('aes-256-cbc', hashedKey, iv);
+  let encrypted = cipher.update(text);
+  encrypted = Buffer.concat([encrypted, cipher.final()]);
+  return iv.toString('hex') + ':' + encrypted.toString('hex');
+};
+
+const decrypt = (encryptedText, secretKey) => {
+  const textParts = encryptedText.split(':');
+  const iv = Buffer.from(textParts.shift(), 'hex');
+  const encryptedTextBuffer = Buffer.from(textParts.join(':'), 'hex');
+
+  const hash = crypto.createHash('sha256');
+  hash.update(secretKey);
+  const hashedKey = hash.digest();
+
+  const decipher = crypto.createDecipheriv('aes-256-cbc', hashedKey, iv);
+  let decrypted = decipher.update(encryptedTextBuffer);
+  decrypted = Buffer.concat([decrypted, decipher.final()]);
+
+  return decrypted.toString();
+};
+
+
+const realTimeChatController = {
+ 
   findAvailableAgent: async function() {
     const agent = await agentModel.findOne({ role: 'agent', status: 0 });  
     if (agent) {
@@ -81,22 +115,24 @@ const realTimeChatController = {
     try {
       const { chatId, content , role , userId } = req.body;
       const createdBy = userId; // Assuming user is authenticated
+      const secretKey = 'your-secret-key'; // Replace with a key of your choice
+      const encryptedContent = encrypt(content, secretKey);
       console.log("1234567890");
       let name ="";
       if(role=== 'agent'){
         console.log("1");
         const agent = await agentModel.findById(createdBy);
-         name = agent.agentType;
+        name = agent.agentType;
       }else if (role ==='user'){
         console.log("2");
         const user = await userModel.findById(createdBy);
-         name = user.firstName;
+        name = user.firstName;
       }
       console.log("name" , name);
       const newMessage = new messageModel({
         _id: new mongoose.Types.ObjectId(),
         chatId,
-        content,
+        content : encryptedContent,
         createdAt: new Date(),
         createdBy,
         creatorName:name,
@@ -117,21 +153,25 @@ const realTimeChatController = {
       return res.status(500).json({ message: error.message });
     }
   },
-receiveMessage: async (req, res) => {
-  try {
-    const { chatId } = req.params;
-    console.log("RECEIVE MESSAGE BACKEND");
-    console.log("chat id" , chatId);
-    
-    // Fetch messages for the specified chat
-      const messages = await messageModel.find({ chatId })
-
-
-    return res.status(200).json({ messages });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-},
+  receiveMessage: async (req, res) => {
+    try {
+      const { chatId } = req.params;
+      console.log("RECEIVE MESSAGE BACKEND");
+      console.log("chat id", chatId);
+  
+      const messages = await messageModel.find({ chatId });
+  
+      // Decrypt each message content
+      const decryptedMessages = messages.map(message => {
+        const decryptedContent = decrypt(message.content, 'your-secret-key'); // Use your secret key
+        return { ...message.toObject(), content: decryptedContent };
+      });
+  
+      return res.status(200).json({ messages: decryptedMessages });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
 
 
 accessChatByAgent: async (req , res) => {

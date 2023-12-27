@@ -8,6 +8,8 @@
   const authRouter = require("../backend/Routes/authRouter");
   const systemRouter = require("../backend/Routes/systemRouter");
   const MFARouter = require("../backend/Routes/MFARouter");
+  const adminRouter = require("./Routes/adminsRouters");
+  const managerRouter = require("./Routes/managersRouters");
   require('dotenv').config();
 
   const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
@@ -35,6 +37,9 @@
   app.use("/api/v1" ,agentRouter );
   app.use("/api/v1/realTimeChat" ,realTimeChatRouter );
   app.use("/api/v1" ,systemRouter);
+  app.use("/api/v1" ,adminRouter);
+  app.use("/api/v1" , managerRouter)
+
 
 
   const db_name = process.env.DB_NAME;

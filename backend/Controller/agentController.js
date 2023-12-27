@@ -116,13 +116,13 @@ const agentController = {
       port: 587,
       secure: false,
       auth: {
-        user: "softwareDeskHelp@outlook.com",
-        pass: "softwareDeskHelp2003",
+        user: 'serverbackend@outlook.com',
+        pass: 'lzqrjnlawkimljiq', // Use the generated app password here
       },
     });
 
     const mailOptions = {
-      from: 'softwareDeskHelp@outlook.com',
+      from: "serverbackend@outlook.com",
       to: user.email,
       subject: 'Ticket Update Notification',
       text: Dear `${user.firstName} ${user.secondName},\n\nYour ticket has been updated. Please check your account to view your ticket`,
@@ -149,6 +149,31 @@ const agentController = {
         return res.status(500).json({ message: "Internal Server Error" });
       }
     },
+
+    getAllTicketsForAgent: async (req, res) => {
+      try {
+        const agentId = req.params.agentId;
+  
+        // Check if the agent exists
+        const agent = await agentModel.findById(agentId);
+        if (!agent || agent.role !== 'agent') {
+          return res.status(404).json({ message: 'Agent not found' });
+        }
+  
+        // Get the ticket IDs from the agent's tickets array
+      const ticketIds = agent.tickets || []; // Assuming the array is named 'tickets'
+
+      // Get all tickets whose IDs are in the ticketIds array
+      const tickets = await ticketModel.find({ _id: { $in: ticketIds } });
+
+      res.status(200).json({ tickets });
+  
+      } catch (error) {
+        console.error('Error getting tickets for agent:', error);
+        res.status(500).json({ message: 'Server error' });
+      }
+    },
+
     
 
     

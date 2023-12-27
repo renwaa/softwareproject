@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 let backend_url = "http://localhost:3000/api/v1";
+import AppNavBarUser from '../components/navbarUser';
+import { useCustomization } from "../contexts/CustomizationContext";
 
 const FaqPage = () => {
+  const { customization, updateCustomization } = useCustomization();
+
   const [faqs, setFaqs] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [searchResultsMessage, setSearchResultsMessage] = useState("");
@@ -43,11 +47,18 @@ const FaqPage = () => {
   };
 
   return (
+    < div style={{ 
+      backgroundColor: customization.backgroundColor, 
+      color: customization.fontColor, 
+      fontSize: `${customization.fontSize} px`,
+      minHeight: '100vh'
+  }}
+  >
+    <AppNavBarUser />
     <div>
       <nav className="navbar bg-body-tertiary-dark">
         <div className="container-fluid d-flex justify-content-between align-items-center">
           <div>
-            <a className="navbar-brand">Desk Help</a>
             <form className="d-flex" onSubmit={handleSearch}>
               <input
                 className="form-control me-2"
@@ -101,6 +112,9 @@ const FaqPage = () => {
         </div>
       )}
     </div>
+
+    </div>
+
   );
 };
 

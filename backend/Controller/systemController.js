@@ -115,71 +115,107 @@ const systemController = {
           
            if (ticketQ.type === 'Software' && ticketQ.priority === 'high') {
               console.log("SOFTWARE AND HIGH");
-              assignToAgent( agent1, ticketQ , queue.high , queue.combined);
+              if(agent1!=null) {
+                assignToAgent( agent1, ticketQ , queue.high , queue.combined);
+              }
             } else if (ticketQ.type === 'Hardware' && ticketQ.priority === 'high') {
               console.log("Hardware AND HIGH");
-              assignToAgent( agent2, ticketQ, queue.high , queue.combined);
+              if(agent2!=null) {
+                assignToAgent( agent2, ticketQ, queue.high , queue.combined);
+              }
             } else if (ticketQ.type === 'Networks' && ticketQ.priority === 'high') {
               console.log("NETWORKS AND HIGH");
-              assignToAgent( agent3, ticketQ, queue.high , queue.combined);
+              if(agent3!=null) {
+                assignToAgent( agent3, ticketQ, queue.high , queue.combined);
+              }
             }
          
       
            
             if (ticketQ.type === 'Software' && ticketQ.priority === 'medium') {
-              if(assignToAgent(agent1, ticketQ , queue.medium , queue.combined) ===false){
-                console.log("11111111");
-                assignToAgent(agent2, ticketQ , queue.medium , queue.combined);
+              if(agent1!=null) {
+                if(assignToAgent(agent1, ticketQ , queue.medium , queue.combined) ===false){
+                  console.log("11111111");
+                  if(agent2!=null) {
+                    assignToAgent(agent2, ticketQ , queue.medium , queue.combined);
+                  }
+                }
               }
   
             } else if (ticketQ.type === 'Hardware' && ticketQ.priority === 'medium') {  // 2, 3
-              if(assignToAgent(agent2, ticketQ , queue.medium , queue.combined) ===false){
-                console.log("2222222222222");
-                assignToAgent(agent3, ticketQ , queue.medium , queue.combined);
+              if(agent2!=null) {
+                if(assignToAgent(agent2, ticketQ , queue.medium , queue.combined) ===false){
+                  console.log("2222222222222");
+                  if(agent3!=null) {
+                    assignToAgent(agent3, ticketQ , queue.medium , queue.combined);
+                  }
+                }
               }
             } else if (ticketQ.type === 'Networks' && ticketQ.priority === 'medium') { // 3 , 1 
-              if(assignToAgent(agent3, ticketQ , queue.medium , queue.combined) === false){
-                console.log("333333333333333")
-                assignToAgent(agent1, ticketQ , queue.medium , queue.combined);
+              if(agent3!=null) {
+                if(assignToAgent(agent3, ticketQ , queue.medium , queue.combined) === false){
+                  console.log("333333333333333")
+                  if(agent1!=null) {
+                    assignToAgent(agent1, ticketQ , queue.medium , queue.combined);
+                  }
+                }
               }
             }
           
             
             
             if (ticketQ.type === 'Software' && ticketQ.priority === 'low') {  // 1 , 3
-              if(assignToAgent(agent1, ticketQ , queue.low , queue.combined) ===false){
-                console.log("444444444444444444");
-                assignToAgent(agent3, ticketQ , queue.low , queue.combined);
+              if(agent1!=null) {
+                if(assignToAgent(agent1, ticketQ , queue.low , queue.combined) ===false){
+                  console.log("444444444444444444");
+                  if(agent3!=null) {
+                    assignToAgent(agent3, ticketQ , queue.low , queue.combined);
+                  }
+                }
               }
             } else if (ticketQ.type === 'Hardware' && ticketQ.priority === 'low') {  //2 , 1 
-              if(assignToAgent(agent2, ticketQ , queue.low , queue.combined) ===false){
-                console.log("5555555555555");
-                assignToAgent(agent1, ticketQ , queue.low , queue.combined);
+              if(agent2!=null) {
+                if(assignToAgent(agent2, ticketQ , queue.low , queue.combined) ===false){
+                  console.log("5555555555555");
+                  if(agent1!=null) {
+                    assignToAgent(agent1, ticketQ , queue.low , queue.combined);
+                  }
+                }
               }
             } else if (ticketQ.type === 'Networks' && ticketQ.priority === 'low') {  // 3, 2 
-              if(assignToAgent(agent3, ticketQ , queue.low , queue.combined) ===false){
-                console.log("6666666666666666");
-                assignToAgent(agent2, ticketQ , queue.low , queue.combined);
+              if(agent3!=null) {
+                if(assignToAgent(agent3, ticketQ , queue.low , queue.combined) ===false){
+                  console.log("6666666666666666");
+                  if(agent2!=null) {
+                    assignToAgent(agent2, ticketQ , queue.low , queue.combined);
+                  }
+                }
               }
             }
       
-         agent1.save(); 
-         agent2.save(); 
-         agent3.save(); 
+         if(agent1!=null) {
+          agent1.save();
+         } 
+         if(agent2!=null) {
+          agent2.save();
+         } 
+         if(agent3!=null) {
+          agent3.save();
+         } 
          queue.save(); 
          ticketQ.save();
   
-        const result = { queue, agent1, agent2, agent3 };
         }
         console.log("after if");
         
         setInterval(async () => {
           try {
               console.log("finished ");
-              if (agent1.tickets.length === 5 && agent2.tickets.length === 5 && agent3.tickets.length === 5) {
-                  console.log("all our agents are busy rn working on other tickets");
-                  // res.status(200).json({ message: 'All agents are busy right now', result });
-              } else if (queue.combined.length > 0) {
+              // if (agent1.tickets.length === 5 && agent2.tickets.length === 5 && agent3.tickets.length === 5) {
+              //     console.log("all our agents are busy rn working on other tickets");
+              //     // res.status(200).json({ message: 'All agents are busy right now', result });
+              // } else
+               if (queue.combined.length > 0) {
                   await systemController.assignTickets();
                   console.log('assignTickets function executed successfully.');
               } else {
