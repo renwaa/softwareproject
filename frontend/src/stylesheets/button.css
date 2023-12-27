@@ -1,0 +1,83 @@
+/* Reset default margin and padding on the page */
+.big-button-page {
+    margin: 0;
+    padding: 0;
+    width: 100%; /* Set the page width */
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Center the content horizontally */
+    align-items: center; /* Center the content vertically */
+    height: 100vh; /* Set the page height to full viewport height */
+}
+
+/* Set up the layout for buttons container */
+.buttons-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%; /* Full width of their container */
+}
+
+/* Shared styles for both buttons */
+.support-button {
+    display: flex; /* Use flexbox for alignment */
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center items horizontally */
+    justify-content: center; /* Center items vertically */
+    width: 48%; /* Each button takes up 48% of the container width */
+    margin: 0; /* Reset margin */
+    padding: 2rem; /* Padding inside the buttons */
+    border-radius: 10px; /* Rounded corners */
+    background-color: #fff; /* White background */
+    color: #000; /* Black text color */
+    text-align: center; /* Center the text */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow for depth */
+    transition: background-color 0.3s, color 0.3s; /* Transition for hover effects */
+}
+
+
+/* Define styles for the support icon */
+.support-icon {
+    margin-bottom: 1rem; /* Space below the icon */
+}
+
+/* Style headings and paragraphs within support cards */
+.support-text h3 {
+    font-size: 1.5rem; /* Heading font size */
+    color: #000; /* Black color for the heading */
+    margin-bottom: 0.5rem; /* Space below the heading */
+}
+
+.support-text p {
+    font-size: 1rem; /* Paragraph font size */
+    color: #6c757d; /* Grey color for the paragraph */
+}
+
+
+
+.icon { 
+    width: 50px; /* Set a smaller width for the icon */
+    height: px; /* Set a smaller height for the icon */
+    /* You can adjust these values as needed */
+}
+
+/* Additional adjustments may be needed for alignment and spacing */
+.button-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* Other existing styles... */
+}
+
+.buttons-container {
+    padding-bottom: 300px;
+}
+
+
+.support-button:hover {
+        background-color: #005eff; /* Blue background on hover */
+        color: #fff; /* White text on hover */
+}
+    
+.support-button:hover .icon svg {
+        fill: #fff; /* Change the SVG color to white on hover */
+}

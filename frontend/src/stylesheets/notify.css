@@ -1,0 +1,17 @@
+.notify-container {
+    padding: 20px;
+    border: 1px solid #ccc;
+    margin: 20px;
+    text-align: center;
+}
+
+.notify-container h2 {
+    margin-bottom: 15px;
+}
+
+.notify-container a {
+    display: inline-block;
+    margin-top: 10px;
+    color: blue;
+    text-decoration: underline;
+}
